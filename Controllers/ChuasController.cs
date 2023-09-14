@@ -36,7 +36,7 @@ namespace QuanLyPhanTuWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNew(ChuasDto chuasDto)
+        public IActionResult Create(ChuasDto chuasDto)
         {
             
             if (ModelState.IsValid)
