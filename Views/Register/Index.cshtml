@@ -1,0 +1,26 @@
+﻿@model Register
+
+<title>Trang Đăng Ký</title>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-5">
+            <h2 class="text-center">Đăng Ký</h2>
+            <form>
+                
+                <div class="form-group">
+                    <label asp-for="email">Tên đăng kí:</label>
+                    <input type="text" class="form-control" asp-for="email" placeholder="Nhập tên đăng ký">
+                </div>
+                <div class="form-group">
+                    <label asp-for="passwordHash">Mật khẩu:</label>
+                    <input type="password" class="form-control" asp-for="passwordHash" placeholder="Nhập mật khẩu">
+                </div>
+                <div class="form-group">
+                    <label asp-for="repasswordHash">Mật khẩu:</label>
+                    <input type="password" class="form-control" asp-for="repasswordHash" placeholder="Nhập lại mật khẩu">
+                </div>
+                <button type="submit" asp-controller="Register" asp-action="dangKy" class="btn btn-primary mt-2">Đăng kí</button>
+            </form>
+        </div>
+    </div>
+</div>

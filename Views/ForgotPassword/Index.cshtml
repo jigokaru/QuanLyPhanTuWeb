@@ -1,0 +1,33 @@
+﻿
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-header bg-white m-lg-0 py-3 rounded">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="py-2">Tìm email của bạn</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="py-2" style="font-size: 1.4rem">Nhập email khôi phục</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" asp-controller="ForgotPassword" asp-action="QuenMatKhau">
+            <div class="row">
+                <div class="from-floating py-2 col-12" pb-2">
+                    <input type="email" class="form-control border-0 shadow" style="height: 50px" id="emailInput" name="email" placeholder="Tên email">
+
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-md-8"></div>
+                <div class="col-md-4 d-grid align-items-center">
+                    <button type="submit" class="btn btn-primary btn-block">Tiếp theo</button>
+                </div>
+            </div>
+           
+        </form>
+    </div>
+</div>

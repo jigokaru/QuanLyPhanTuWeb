@@ -1,0 +1,54 @@
+﻿@model DaoTrangs
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-header bg-secondary bg-dark m-lg-0 py-3 rounded">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white py-2">Sửa thông tin đạo tràng</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row">
+            <div class="border p-3 mt-4">
+                <input asp-for="daoTrangId" hidden />
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="from-floating py-2 col-12 pb-2">
+                    <label for="daKetThuc">Đã kết thúc</label>
+                    <select asp-for=daKetThuc class="form-control" name="daKetThuc">
+                        <option value="True">True</option>
+                        <option value="False">False</option>
+                    </select>
+                </div>
+                <div class="from-floating py-2 col-12 pb-2">
+                    <label asp-for="noiDung" class="ms-2"></label>
+                    <input asp-for="noiDung" class="form-control border-0 shadow" />
+                    <span asp-validation-for="noiDung" class="text-danger"></span>
+                </div>
+                <div class="from-floating py-2 col-12 pb-2">
+                    <label asp-for="noiToChuc" class="ms-2"></label>
+                    <input asp-for="noiToChuc" class="form-control border-0 shadow" />
+                    <span asp-validation-for="noiToChuc" class="text-danger"></span>
+                </div>
+                <div class="from-floating py-2 col-12 pb-2">
+                    <label asp-for="thoiGianToChuc" class="ms-2"></label>
+                    <input asp-for="thoiGianToChuc" class="form-control border-0 shadow" />
+                    <span asp-validation-for="thoiGianToChuc" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-3 rounded">
+                        <button type="submit" class="btn btn-primary form-control rounded" asp-controller="DaoTrangs" asp-action="Update">Edit</button>
+                    </div>
+                    <div class="col-6 col-md-3 rounded">
+                        <a asp-controller="DaoTrangs" asp-action="Index" class="btn btn-outline-secondary form-control rounded">
+                            BACK TO LIST
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+</div>
+

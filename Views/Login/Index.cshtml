@@ -1,0 +1,33 @@
+﻿
+@model Login
+<title>Trang Đăng Nhập</title>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-5">
+            <h2 class="text-center">Đăng Nhập</h2>
+            <form method="post">
+                @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+                {
+                    <div class="alert alert-success">
+                        @ViewBag.SuccessMessage
+                    </div>
+                }
+                <div class="form-group">
+                    <label asp-for="email">Tên đăng nhập:</label>
+                    <input type="text" class="form-control" asp-for="email" placeholder="Nhập tên đăng nhập">
+                    <span asp-validation-for="email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="password">Mật khẩu:</label>
+                    <input type="password" class="form-control" asp-for="password" placeholder="Nhập mật khẩu">
+                    <span asp-validation-for="password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <a asp-controller="ForgotPassword" asp-action="Index">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" asp-controller="login" asp-action="Index" class="btn btn-primary btn-block mt-2">Đăng nhập</button>
+            </form>
+            <p class="text-center mt-3">Bạn chưa có tài khoản? <a asp-controller="Register" asp-action="Index">Đăng ký  ngay</a></p>
+        </div>
+    </div>
+</div>

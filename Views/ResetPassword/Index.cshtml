@@ -1,0 +1,23 @@
+﻿@model ResetPassword
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Nhập mã và mật khẩu</h5>
+        <form method="post" asp-controller="ResetPassword" asp-action="DatLaiMatKhau">
+            <div class="mb-3">
+                <label for="codeInput" class="form-label">Mã:</label>
+                <input type="text" class="form-control" id="codeInput" name="token" placeholder="Nhập mã">
+            </div>
+            <div class="mb-3">
+                <label for="passwordInput" class="form-label">Nhập mật khẩu:</label>
+                <input type="password" class="form-control" id="passwordInput" name="passwordHash" placeholder="Nhập mật khẩu">
+            </div>
+            <div class="mb-3">
+                <label for="passwordInput" class="form-label">Nhập lại mật khẩu:</label>
+                <input type="password" class="form-control" id="passwordInput" name="repasswordHash" placeholder="Nhập mật khẩu">
+            </div>
+            <button type="submit"class="btn btn-primary">Đổi mật khẩu</button>
+        </form>
+    </div>
+</div>
+

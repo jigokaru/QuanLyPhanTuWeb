@@ -1,0 +1,38 @@
+﻿@model DonDangKysDto
+
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-body p-4">
+        <div class="modal-content">
+            <div class="row" style="padding: 0 10px 0 10px">
+                <form asp-controller="DonDangKys" asp-action="themDonDangKys" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Tạo đơn đăng ký</h5>
+                        <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                    </div>
+                    <div asp-validation-summary="All"></div>
+                    <div class="row" style="padding: 0 10px 0 10px">
+                        <div class="modal-body col-md-12">
+                            <label asp-for="daoTrangId">Id đạo tràng</label>
+                            <input asp-for="daoTrangId" class="form-control" />
+                            <span asp-validation-for="daoTrangId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 col-md-3 rounded">
+                            <button type="submit" class="btn btn-primary form-control rounded" asp-controller="DonDangKys" asp-action="themDonDangKys">Create</button>
+                        </div>
+                        <div class="col-6 col-md-3 rounded">
+                            <a asp-controller="DonDangKys" asp-action="Index" class="btn btn-outline-secondary form-control rounded">
+                                BACK TO LIST
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+

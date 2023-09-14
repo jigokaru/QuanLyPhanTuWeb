@@ -1,0 +1,201 @@
+﻿@using Microsoft.AspNetCore.Http
+@using System.IdentityModel.Tokens.Jwt
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var jwt = HttpContextAccessor.HttpContext.Request.Cookies["token"];
+    var userName = string.Empty;
+    if (!string.IsNullOrEmpty(jwt))
+    {
+        userName = GetNameFromToken(jwt);
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - QuanLyPhanTuWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/QuanLyPhanTuWeb.styles.css" asp-append-version="true" />
+
+</head>
+
+<body>
+    
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuanLyPhanTuWeb</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @*<li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>*@
+                    </ul>
+                    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["token"]))
+                    {
+                        if (!string.IsNullOrEmpty(userName))
+                        {
+                            <ul class="navbar-nav align-items-center dropdown ml-auto p-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i> @userName
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item">
+                                        <a class="btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="PhatTu" asp-action="Index">
+                                            Thông tin cá nhân
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Login" asp-action="DangXuat">Đăng Xuất</a></li>
+                                    
+                                </ul>
+                                
+                            </ul>
+                            <ul class="nav flex-column menu">
+                                <li class="nav-item">
+                                    <a class=" btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+
+                                <li class="nav-item">
+
+                                    <a class="btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                </li>
+                            </ul>
+
+                        }
+                        else
+                        {
+                            <ul class="navbar-nav align-items-center dropdown ml-auto p-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="nav-item">
+                                        <a class="btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="PhatTu" asp-action="Index">
+                                            Thông tin cá nhân
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Login" asp-action="DangXuat">Đăng Xuất</a></li>
+
+                                </ul>
+
+                            </ul>
+                        }
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Register" asp-action="Index">Sign Up</a>
+                            </li>
+                        </ul>
+                    }
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <div class="sidebar col-md-4 col-lg-2  bg-ligh align-items-center  border-end">
+                <div class="position-sticky">
+                    <ul class="nav flex-column ">
+                        <li class="nav-item">
+                            <a class=" btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="btn btn-outline-light text-dark" style="width:100%" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="btn btn-outline-light text-dark dropdown-toggle" style="width:100%" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Trợ giảng
+                            </a>
+                            <ul class="dropdown-menu" style="width:100%">
+                                <li><a class="btn btn-outline-light text-dark text-center dropdown-item" asp-controller="GiamSatHocTap" asp-action="Index">Giám sát học tập</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+
+                            <a class="btn btn-outline-light text-dark" style="width:100%" asp-controller="Chuas" asp-action="Index">Chùa</a>
+                        </li>
+                        <li class="nav-item">
+
+                            <a class="btn btn-outline-light text-dark" style="width:100%" asp-controller="DaoTrangs" asp-action="Index">Đạo tràng</a>
+                        </li>
+                        <li class="nav-item">
+
+                            <a class="btn btn-outline-light text-dark" style="width:100%" asp-controller="DonDangKys" asp-action="Index">Đơn đăng ký</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="col-md-8 col-lg-10 col-sm-12">
+                <div class="container">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+   
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - QuanLyPhanTuWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+@functions
+{
+    private string GetNameFromToken(string jwtToken)
+    {
+        // Xử lý logic để lấy thông tin tên người dùng từ token
+        // Ví dụ, nếu bạn lưu thông tin tên người dùng vào claim "username" khi tạo token, bạn có thể lấy thông tin tên người dùng từ claim như sau:
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.ReadJwtToken(jwtToken);
+        var expiration = token.ValidTo;
+        if(DateTime.UtcNow <= expiration)
+        {
+            var nameClaim = token.Claims.FirstOrDefault(c => c.Type == "username");
+            if (nameClaim != null)
+            {
+                return nameClaim.Value;
+            }
+        }
+        else
+        {
+            HttpContextAccessor.HttpContext.Response.Cookies.Delete("token");
+        }
+        return null;
+    }
+}

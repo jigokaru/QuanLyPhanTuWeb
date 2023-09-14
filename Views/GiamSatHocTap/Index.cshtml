@@ -1,0 +1,308 @@
+﻿@model Pagination<PhanTu>
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-body p-4">
+        <form id="searchForm" method="get">
+            <div class="row mb-4">
+                <span class="col-md-6 text-md-start">Tìm kiếm phật tử</span>
+                <a class="col-md-6 text-md-end search-button" style="cursor: pointer" id="searchButton"><i class="bi bi-search"></i></a>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchTen" name="ten" placeholder="Tên">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchPhapDanh" name="phapdanh" placeholder="Pháp danh">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchEmail" name="email" placeholder="Email">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" id="searchGioiTinh" name="gioitinh">
+                        <option value="">Tất cả giới tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <select class="form-control" id="searchIsActive" name="isActive">
+                        <option value="">Trạng thái phần tử</option>
+                        <option value="True">True</option>
+                        <option value="False">False</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        
+    </div>
+</div>
+<div class="card shadow border-0 mt-4 rounded" action="/GiamSatHocTap/Index">
+    <div class="card-body p-4">
+        <div class="row mb-4">
+            <div class="col-md-6 text-md-start"></div>
+            <div class="col-md-6 text-md-end">
+                
+                <form method="get" asp-controller="GiamSatHocTap" asp-action="Index">
+                    <input type="hidden" id="sortOrderInput" name="sortOrder" />
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sắp xếp
+                        </button>
+                        <ul class="dropdown-menu">
+                            <button class="dropdown-item" asp-controller="GiamSatHocTap" asp-action="Index" type="submit" name="sortOrder" data-value="asc">Tên tăng dần</button>
+                            <button class="dropdown-item" asp-controller="GiamSatHocTap" asp-action="Index" type="submit" name="sortOrder" data-value="desc">Tên giảm dần</button>
+                            @*<li><a class="dropdown-item" asp-controller="GiamSatHocTap" asp-action="Index">Ngày cập nhập tăng</a></li>
+                            <li><a class="dropdown-item" asp-controller="GiamSatHocTap" asp-action="Index">Ngày cập nhập giảm</a></li>*@
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <form asp-controller="GiamSatHocTap" asp-action="SuaThongTinPhatTu" method="post">
+                        <input id="phatTuId" name="id" hidden />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Thông tin chi tiết phật tử</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="row" style="padding: 0 10px 0 10px">
+                            <div class="modal-body col-6">
+                                <label for="ten">Tên</label>
+                                <input type="text" class="form-control" id="ten" name="ten">
+                            </div>
+                            <div class="modal-body col-6">
+                                <label for="phapdanh">Pháp danh</label>
+                                <input type="text" class="form-control" id="phapdanh" name="phapdanh">
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 0 10px 0 10px">
+                            <div class="modal-body col-6">
+                                <label for="email">Email</label>
+                                <input type="text" class="form-control" id="email" name="email">
+                            </div>
+                            <div class="modal-body col-6">
+                                <label for="sodienthoai">Số điện thoại</label>
+                                <input type="text" class="form-control" id="sodienthoai" name="sodienthoai">
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 0 10px 0 10px">
+                            <div class="modal-body col-6">
+                                <label for="ngaysinh">Ngày sinh</label>
+                                <input type="text" class="form-control" id="ngaysinh" name="ngaysinh">
+                            </div>
+                            <div class="modal-body col-6">
+                                <label for="ngayxuatgia">Ngày xuất gia</label>
+                                <input type="text" class="form-control" id="ngayxuatgia" name="ngayxuatgia">
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 0 10px 0 10px">
+                            <div class="modal-body col-4">
+                                <label for="gioitinh">Giới tính</label>
+                                <select class="form-control" id="gioitinh" name="gioitinh">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                                
+                            </div>
+                            <div class="modal-body col-4">
+                                <label for="hoantuc">Hoàn tục</label>
+                                <input type="text" class="form-control" id="hoantuc" name="hoantuc">
+                            </div>
+                            <div class="modal-body col-4">
+                                <label for="ngayhoantuc">Ngày hoàn tục</label>
+                                <input type="text" class="form-control" id="ngayhoantuc" name="ngayhoantuc">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+
+        <table id="dataTable" class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Phật tử</th>
+                    <th>Ngày xuất gia</th>
+                    <th>Số điện thoại</th>
+                    <th>Số buổi đạo tràng đã tham gia</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.Data)
+                {
+                    <tr>
+                        <td>
+                            <i class="bi bi-person btn-edit" style="cursor: pointer; font-size: 1.6rem;"></i>
+                        </td>
+                        <td>
+                            @obj.ten
+                            @obj.email
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            @obj.DaoTrang.Count()
+                        </td>
+                        <td>
+                            <div class="w-75 btn-group" role="group">
+                                <a class="btn btn-primary mx-2 rounded btn-edit flex-fill" data-phattu-id="@obj.phatTuId" data-ten="@obj.ten"
+                                   data-phapdanh="@obj.phapDanh" data-email="@obj.email" data-sodienthoai="@obj.soDienThoai" data-ngaysinh="@obj.ngaySinh"
+                                   data-ngayxuatgia="@obj.ngayXuatGia" data-gioitinh="@obj.gioiTinh" data-hoantuc="@obj.daHoanTuc" data-ngayhoantuc="@obj.ngayHoanTuc">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-phattu-id="@obj.phatTuId">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="1" data-page-size="@Model.PageSize" style="cursor: pointer">Đầu</a>
+                    </li>
+                    <li class="page-item @(Model.PageNumber == 0 ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page-number="@Model.PageNumber - 1" data-page-size="@Model.PageSize" style="cursor: pointer">Trước</a>
+                    </li>
+                            }
+                            @for (int i = 1; i <= Model.TotalPage; i++)
+                            {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="#" data-page-number="@i" data-page-size="@Model.PageSize" style="cursor: pointer">@i</a>
+                    </li>
+                            }
+                            @if (Model.PageNumber < Model.TotalPage)
+                            {
+                    <li class="page-item @(Model.PageNumber == Model.TotalPage ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page-number="@{var next = Model.PageNumber + 1; @next}" data-page-size="@Model.PageSize" style="cursor: pointer">Tiếp</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="@Model.TotalPage" data-page-size="@Model.PageSize" style="cursor: pointer">Cuối</a>
+                    </li>
+                            }
+            </ul>
+        </nav>
+        <!-- Modal Confirm Delete -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form method="post" asp-controller="GiamSatHocTap" asp-action="XoaPhatTu">
+                        <input id="deletePhatTuId" name="id" hidden />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa phật tử</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn xóa phật tử này?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var phatTuIdToEdit = null;
+    // Xử lý sự kiện nhấn nút "Edit"
+    $(document).on("click", ".btn-edit", function () {
+        // Lấy phatTuId từ thuộc tính data-id của nút "Edit"
+        var phatTuId = $(this).data("phattu-id");
+        var ten = $(this).data("ten");
+        var phapdanh = $(this).data("phapdanh");
+        var email = $(this).data("email");
+        var sodienthoai = $(this).data("sodienthoai");
+        var ngaysinh = $(this).data("ngaysinh");
+        var ngayxuatgia = $(this).data("ngayxuatgia");
+        var gioitinh = $(this).data("gioitinh");
+        var hoantuc = $(this).data("hoantuc");
+        var ngayhoantuc = $(this).data("ngayhoantuc");
+       
+        $("#phatTuId").val(phatTuId);
+        $("#ten").val(ten);
+        $("#phapdanh").val(phapdanh);
+        $("#email").val(email);
+        $("#sodienthoai").val(sodienthoai);
+        $("#ngaysinh").val(ngaysinh);
+        $("#ngayxuatgia").val(ngayxuatgia);
+        $("#gioitinh").val(gioitinh);
+        $("#hoantuc").val(hoantuc);
+        $("#ngayhoantuc").val(ngayhoantuc);
+
+        
+
+        $("#editModal").modal("show");
+        return false;
+    });
+
+    $(document).on("click", ".btn-delete", function () {
+        var phatTuId = $(this).data("phattu-id");
+
+        // Gán giá trị của phatTuId vào input
+        $("#deletePhatTuId").val(phatTuId);
+
+        // Hiển thị modal xác nhận
+        $("#confirmDeleteModal").modal("show");
+        return false;
+    });
+
+    // Xử lý sự kiện khi ấn phía ngoài khung card nhỏ
+    $(document).on("click", "[data-dismiss='modal']", function () {
+        // Ẩn `editModal`
+        $("#editModal").modal("hide");
+        $("#confirmDeleteModal").modal("hide");
+    });
+
+    $(document).on("click", "#searchButton", function () {
+        // Lấy các giá trị tìm kiếm từ các trường nhập liệu
+        var ten = $("#searchTen").val();
+        var phapdanh = $("#searchPhapDanh").val();
+        var email = $("#searchEmail").val();
+        var gioitinh = $("#searchGioiTinh").val();
+        var isActive = $("#searchIsActive").val();
+
+        // Chuyển hướng đến URL tìm kiếm với các tham số đã cung cấp
+        var url = "/GiamSatHocTap/Index?ten=" + encodeURIComponent(ten)
+            + "&phapdanh=" + encodeURIComponent(phapdanh)
+            + "&email=" + encodeURIComponent(email)
+            + "&gioitinh=" + encodeURIComponent(gioitinh)
+            + "&isActive=" + encodeURIComponent(isActive);
+
+        window.location.href = url;
+    });
+
+    $(document).on("click", ".page-link", function () {
+        var pageNumber = $(this).data("page-number");
+        var pageSize = $(this).data("page-size");
+
+        // Gửi yêu cầu đến server với pageNumber và pageSize đã chọn
+        window.location.href = "/GiamSatHocTap/Index?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    });
+    $(document).on("click", ".dropdown-item", function () {
+        var sortOrderValue = $(this).data("value");
+        $("#sortOrderInput").val(sortOrderValue); // Gán giá trị vào trường input có id là "sortOrderInput"
+    });
+</script>

@@ -1,0 +1,92 @@
+﻿@model PhanTu
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-header bg-secondary bg-dark m-lg-0 py-3 rounded">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white py-2">Thông tin cá nhân</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form asp-controller="PhatTu" asp-action="UploadImage" method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="phatTuId" hidden />
+            <input asp-for="anhChup" hidden />
+            <div class="border p-3 mt-4">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="container">
+                    <div class="row justify-content-center" style="align-items:center">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.anhChup))
+                            {
+                                <img src="@Model.anhChup.ToString()" alt="Avatar" class="border border-1" style="max-width: 100%; height: auto;">
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-square" style="font-size:8rem"></i>
+                            }
+                            <div class="btn-group pt-2 ml-auto">
+                                <label class="btn btn-primary ml-auto" for="fileInput">Chọn ảnh</label>
+                                @*<button type="button" class="btn btn-danger">Xóa ảnh</button>*@
+                                <input asp-controller="PhatTu" asp-action="Upsert" type="file" name="file" id="fileInput" style="display:none" accept="image/*">
+                                <button type="submit" asp-controller="PhatTu" asp-action="fileUpload" class="btn btn-success">Tải lên</button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-md-5"></div>
+                    </div>
+                   
+                </div>
+                <div class="row">
+                    <div class=" from-floating py-2 col-6 pb-2">
+                        <label asp-for="email" class="ms-2"></label>
+                        <input asp-for="email" disabled class=" form-control border-0 shadow" />
+                    </div>
+                    <div class="from-floating py-2 col-6 pb-2">
+                        <label asp-for="ten" class="ms-2"></label>
+                        <input asp-for="ten" class="form-control border-0 shadow" />
+                        <span asp-validation-for="ten" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class=" from-floating py-2 col-6 pb-2">
+                        <label asp-for="ngaySinh" class="ms-2"></label>
+                        <input asp-for="ngaySinh" class=" form-control border-0 shadow" />
+                        <span asp-validation-for="ngaySinh" class="text-danger"></span>
+                    </div>
+                    <div class="from-floating py-2 col-6 pb-2">
+                        <label asp-for="phapDanh" class="ms-2"></label>
+                        <input asp-for="phapDanh" class="form-control border-0 shadow" />
+                        <span asp-validation-for="phapDanh" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class=" from-floating py-2 col-6 pb-2">
+                        <label asp-for="gioiTinh" class="ms-2"></label>
+                        <input asp-for="gioiTinh" class=" form-control border-0 shadow" />
+                        <span asp-validation-for="gioiTinh" class="text-danger"></span>
+                    </div>
+                    <div class="from-floating py-2 col-6 pb-2">
+                        <label asp-for="soDienThoai" class="ms-2"></label>
+                        <input asp-for="soDienThoai" class="form-control border-0 shadow" />
+                        <span asp-validation-for="soDienThoai" class="text-danger"></span>
+                    </div>
+                </div>
+               
+
+                <div class="row">
+                    <div class="col-6 col-md-3 rounded">
+                        <button asp-controller="PhatTu" asp-action="Upsert" type="submit" class="btn btn-danger form-control rounded">Lưu thay đổi</button>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+        </form>
+    </div>
+</div>
+

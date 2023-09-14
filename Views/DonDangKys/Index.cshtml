@@ -1,0 +1,166 @@
+﻿@model Pagination<DonDangKys>
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-body p-4" >
+        
+        <div class="card shadow border-0 mt-4 rounded" id="createDonDangKyCard" style="display: none">
+            <div class="card-body p-4">
+                <div class="modal-content">
+                    <form asp-controller="DonDangKys" asp-action="themDonDangKys" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Tạo đơn đăng ký</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div asp-validation-summary="All"></div>
+                        <div class="row" style="padding: 0 10px 0 10px">
+                            <div class="modal-body col-md-12">
+                                <label for="daoTrangId">Id đạo tràng</label>
+                                <input type="text" class="form-control" id="daoTrangId" name="daoTrangId">
+                                @if (!ViewData.ModelState.IsValid && ViewData["ErrorMessage"] != null)
+                                {
+                                    <span class="text-danger">@ViewData["ErrorMessage"]</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Đăng ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="row pb-3">
+            <div class="col-6 ">
+                <a style="font-size: 1.4rem">Thông tin đơn đăng ký</a>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-primary rounded" asp-controller="DonDangKys" asp-action="themDonDangKys">
+                    <i class="bi bi-plus-circle"></i> Tạo đơn đăng ký
+                </a>
+            </div>
+        </div>
+        <table id="dataTable" class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Trạng thái đơn</th>
+                    <th>Tên phật tử</th>
+                    <th>Ngày gửi đơn</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.Data)
+                {
+                    <tr>
+                        <td></td>
+                        <td>
+                            @obj.trangThaiDon
+                        </td>
+                        <td>
+                            @obj.phatTu.ten
+                        </td>
+                        <td>
+                            @obj.ngayGuiDon
+                        </td>
+                        <td>
+                            <div class="w-75 btn-group" role="group">
+                                <a class="btn btn-primary mx-2 rounded flex-fill" asp-route-donDangkyId="@obj.donDangkyId" asp-controller="DonDangKys" asp-action="duyetDon">
+                                    <i class="bi bi-pencil-square"></i> Duyệt đơn
+                                </a>
+                                <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-dondangkys-id="@obj.donDangkyId">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="1" data-page-size="@Model.PageSize" style="cursor: pointer">Đầu</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="@Model.PageNumber - 1" data-page-size="@Model.PageSize" style="cursor: pointer">Trước</a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.TotalPage; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="#" data-page-number="@i" data-page-size="@Model.PageSize" style="cursor: pointer">@i</a>
+                    </li>
+                }
+                @if (Model.PageNumber < Model.TotalPage)
+                {
+                    @*<li class="page-item">
+                <a class="page-link" href="#" data-page-number="@Model.PageNumber + 1" data-page-size="@Model.PageSize" style="cursor: pointer">Tiếp</a>
+                </li>*@
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="@Model.TotalPage" data-page-size="@Model.PageSize" style="cursor: pointer">Cuối</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <!-- Modal Confirm Delete -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form method="post" asp-controller="DonDangKys" asp-action="xoaDonDangKys">
+                        <input id="deleteDonDangKyId" name="id" hidden />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa đơn đăng ký</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn xóa đơn đăng ký này?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    
+
+    $(document).on("click", "[data-dismiss='modal']", function () {
+        $("#confirmDeleteModal").modal("hide");
+    });
+
+    $(document).on("click", ".btn-delete", function () {
+        var donDangKysId = $(this).data("dondangkys-id");
+
+        // Gán giá trị của phatTuId vào input
+        $("#deleteDonDangKyId").val(donDangKysId);
+
+        // Hiển thị modal xác nhận
+        $("#confirmDeleteModal").modal("show");
+        return false;
+    });
+
+    $(document).on("click", ".page-link", function () {
+        var pageNumber = $(this).data("page-number");
+        var pageSize = $(this).data("page-size");
+
+        // Gửi yêu cầu đến server với pageNumber và pageSize đã chọn
+        window.location.href = "/DonDangKys/Index?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    });
+</script>
+

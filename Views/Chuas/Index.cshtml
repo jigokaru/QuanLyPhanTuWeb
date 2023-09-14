@@ -1,0 +1,125 @@
+﻿@model Pagination<Chuas>
+
+<div class="card shadow border-0 mt-4 rounded">
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6 ">
+                <a style="font-size: 1.4rem">Thông tin chùa</a>
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Chuas" asp-action="Create" class="btn btn-primary rounded">
+                    <i class="bi bi-plus-circle"></i> Tạo chùa mới
+                </a>
+            </div>
+        </div>
+        <table id="dataTable" class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Tên chùa</th>
+                    <th>Địa chỉ</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.Data)
+                {
+                    <tr>
+                        <td></td>
+                        <td>
+                            @obj.tenChua
+                        </td>
+                        <td>
+                            @obj.diaChi
+                        </td>
+                        <td>
+                            <div class="w-75 btn-group" role="group">
+                                <a class="btn btn-primary mx-2 rounded flex-fill" asp-route-chuaId="@obj.chuaId" asp-controller="Chuas" asp-action="Update">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-chua-id="@obj.chuaId">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="1" data-page-size="@Model.PageSize" style="cursor: pointer">Đầu</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="@Model.PageNumber - 1" data-page-size="@Model.PageSize" style="cursor: pointer">Trước</a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.TotalPage; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="#" data-page-number="@i" data-page-size="@Model.PageSize" style="cursor: pointer">@i</a>
+                    </li>
+                }
+                @if (Model.PageNumber < Model.TotalPage)
+                {
+                    @*<li class="page-item">
+                <a class="page-link" href="#" data-page-number="@Model.PageNumber + 1" data-page-size="@Model.PageSize" style="cursor: pointer">Tiếp</a>
+                </li>*@
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page-number="@Model.TotalPage" data-page-size="@Model.PageSize" style="cursor: pointer">Cuối</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <!-- Modal Confirm Delete -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form method="post" asp-controller="Chuas" asp-action="Delete">
+                        <input id="deleteChuasId" name="id" hidden/>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa chùa</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn xóa Chùa này?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on("click", ".btn-delete", function () {
+        var chuaId = $(this).data("chua-id");
+
+        $("#deleteChuasId").val(chuaId);
+        // Hiển thị modal xác nhận
+        $("#confirmDeleteModal").modal("show");
+        return false;
+    });
+
+    $(document).on("click", "[data-dismiss='modal']", function () {
+        // Ẩn `editModal`
+        $("#confirmDeleteModal").modal("hide");
+    });
+
+    $(document).on("click", ".page-link", function () {
+        var pageNumber = $(this).data("page-number");
+        var pageSize = $(this).data("page-size");
+
+        // Gửi yêu cầu đến server với pageNumber và pageSize đã chọn
+        window.location.href = "/Chuas/Index?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    });
+</script>
