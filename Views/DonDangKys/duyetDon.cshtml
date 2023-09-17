@@ -20,11 +20,12 @@
                     <div class="row" style="padding: 0 10px 0 10px">
                         <div class="modal-body col-md-12">
                             <label asp-for="trangThaiDon">Trạng thái đơn</label>
-                            <select class="form-control" id="trangThaiDon" name="trangThaiDon">
-                                <option>Trạng thái đơn</option>
-                                <option value="true">Chấp nhận</option>
-                                <option value="false">Từ chối</option>
-                            </select>
+                            <div class="input-group">
+                                <select class="form-select" aria-label="Default select example" id="trangThaiDon" name="trangThaiDon">
+                                    <option value="true">Chấp nhận</option>
+                                    <option value="false">Từ chối</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 

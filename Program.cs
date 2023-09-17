@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 using QuanLyPhanTuWeb.Models;
+using QuanLyPhanTuWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,9 +58,22 @@ builder.Services.AddAuthorization(option =>
     ));
 });
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(1); 
+    options.Cookie.HttpOnly = true; 
+    options.Cookie.IsEssential = true; 
+}
+);
+
+builder.Services.AddSession();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IEmailServices, EmailServices>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 var app = builder.Build();
 
@@ -70,6 +84,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

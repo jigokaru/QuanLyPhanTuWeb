@@ -47,7 +47,7 @@ namespace QuanLyPhanTuWeb.Services
                             PhanTu phanTuNew = new PhanTu();
                             phanTuNew.email = register.email;
                             phanTuNew.password = BCrypt.Net.BCrypt.HashPassword(register.passwordHash);
-                            phanTuNew.Role = "ADMIN";
+                            phanTuNew.Role = "MEMBER";
                             appDbContext.PhanTu.Add(phanTuNew);
                             appDbContext.SaveChanges();
                             if (tokenResetPassword == null)

@@ -1,4 +1,11 @@
 ﻿@model Pagination<DaoTrangs>
+@using Microsoft.AspNetCore.Http
+@using System.IdentityModel.Tokens.Jwt
+@using QuanLyPhanTuWeb.Helper
+@{
+    var jwt = Context.Request.Cookies["token"];
+    var userRole = TokenHelper.GetRoleFromToken(jwt);
+}
 
 <div class="card shadow border-0 mt-4 rounded">
     <div class="card-body p-4">
@@ -18,8 +25,17 @@
                     <th></th>
                     <th>Nội dung</th>
                     <th>Nơi tổ chức</th>
+                    <th>Thời gian tổ chức</th>
                     <th>Số thành viên tham gia</th>
-                    <th></th>
+                    @if (userRole.ToUpper() == "ADMIN")
+                    {
+                        <th></th>
+                        <th></th>
+                    }
+                    else if (userRole.ToUpper() == "MEMBER")
+                    {
+                        <th></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -34,18 +50,33 @@
                             @obj.noiToChuc
                         </td>
                         <td>
-                            @obj.soThanhVienThamGia
+                            @obj.thoiGianToChuc?.ToString("dd/MM/yyyy")
                         </td>
                         <td>
-                            <div class="w-75 btn-group" role="group">
+                            @obj.soThanhVienThamGia
+                        </td>
+                        @if (userRole.ToUpper() == "ADMIN")
+                        {
+                            <td>
                                 <a class="btn btn-primary mx-2 rounded flex-fill" asp-route-daoTrangId="@obj.daoTrangId" asp-controller="DaoTrangs" asp-action="Update">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
+                            </td>
+                            <td>
                                 <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-daotrangs-id="@obj.daoTrangId">
                                     <i class="bi bi-trash-fill"></i> Delete
                                 </a>
-                            </div>
-                        </td>
+                            </td>
+                        }
+                        @if (userRole.ToUpper() == "MEMBER")
+                        {
+                            <td>
+                                <a class="btn btn-info mx-2 rounded btn-dangky flex-fill" data-daotrangs-id="@obj.daoTrangId">
+                                    <i class="bi bi-card-checklist"></i> Đăng ký
+                                </a>
+                            </td>
+                        }
+
                     </tr>
                 }
             </tbody>
@@ -85,7 +116,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <form method="post" asp-controller="DaoTrangs" asp-action="Delete">
-                        <input id="deletedaotrangId" name="id" hidden/>
+                        <input id="deletedaotrangId" name="id" hidden />
                         <div class="modal-header">
                             <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa đạo tràng</h5>
                             <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
@@ -94,8 +125,30 @@
                             Bạn có chắc chắn muốn xóa đạo tràng này?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Confirm Dang ky -->
+        <div class="modal fade" id="confirmDangKyModal" tabindex="-1" role="dialog" aria-labelledby="confirmDangKyModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form method="post" asp-controller="DonDangKys" asp-action="themDonDangKys">
+                        <input id="dangKyDaoTrangId" name="daoTrangId" hidden />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDangKyModalLabel">Xác nhận đăng ký đạo tràng</h5>
+                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn đắng ký đạo tràng này?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" id="confirmDangKyButton">Đăng ký</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         </div>
                     </form>
                 </div>
@@ -114,9 +167,19 @@
         return false;
     });
 
+    $(document).on("click", ".btn-dangky", function () {
+        var daotrangId = $(this).data("daotrangs-id");
+
+        $("#dangKyDaoTrangId").val(daotrangId);
+        // Hiển thị modal xác nhận
+        $("#confirmDangKyModal").modal("show");
+        return false;
+    });
+
     $(document).on("click", "[data-dismiss='modal']", function () {
         // Ẩn `editModal`
         $("#confirmDeleteModal").modal("hide");
+        $("#confirmDangKyModal").modal("hide");
     });
 
     $(document).on("click", ".page-link", function () {
@@ -126,4 +189,6 @@
         // Gửi yêu cầu đến server với pageNumber và pageSize đã chọn
         window.location.href = "/DaoTrangs/Index?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
     });
+
 </script>
+

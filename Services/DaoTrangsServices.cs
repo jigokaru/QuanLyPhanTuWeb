@@ -61,6 +61,7 @@ namespace QuanLyPhanTuWeb.Services
                 daoTrangsNew.noiToChuc = daoTrangsDto.noiToChuc;
                 daoTrangsNew.thoiGianToChuc = daoTrangsDto.thoiGianToChuc;
                 daoTrangsNew.phatTuId = id;
+                daoTrangsNew.soThanhVienThamGia = 0;
                 appDbContext.DaoTrangs.Add(daoTrangsNew);
                 appDbContext.SaveChanges();
                 return daoTrangsNew;

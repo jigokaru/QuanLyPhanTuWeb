@@ -6,6 +6,7 @@ using QuanLyPhanTuWeb.Iservices;
 using QuanLyPhanTuWeb.Models;
 using QuanLyPhanTuWeb.Services;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace QuanLyPhanTuWeb.Controllers
 {
@@ -13,11 +14,13 @@ namespace QuanLyPhanTuWeb.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IDonDangKyServices _donDangKyServices;
+        private readonly IRoleService _roleService;
 
         public DonDangKysController()
         {
             _db = new AppDbContext();
             _donDangKyServices = new DonDangKyServices();
+            _roleService = new RoleService();
         }
 
         public IActionResult Index(bool? trangThaiDon, string? tenPhatTu, DateTime? ngayGuiDon,
@@ -28,27 +31,27 @@ namespace QuanLyPhanTuWeb.Controllers
             return View(paginatedDonDangKys);
         }
 
-        public IActionResult themDonDangKys()
-        {
-            return View();
-        }
+        //public IActionResult themDonDangKys()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
-        public IActionResult themDonDangKys(DonDangKysDto? donDangKysDto)
+        public IActionResult themDonDangKys(int daoTrangId)
         {
             var jwt = Request.Cookies["token"];
             var id = GetIdFromToken(jwt);
             if (ModelState.IsValid)
             {
-                var res = _donDangKyServices.themDonDangKys(id, donDangKysDto);
+                var res = _donDangKyServices.themDonDangKys(id, daoTrangId);
                 if (res == null)
                 {
                     ModelState.AddModelError("daoTrangId", "đạo tràng Id không tồn tại.");
                 }
-                return RedirectToAction("Index", "DonDangKys");
+                return RedirectToAction("Index", "DaoTrangs");
             }
             ViewData["ErrorMessage"] = "bắt buộc nhập.";
-            return View(donDangKysDto);
+            return View();
             
         }
 

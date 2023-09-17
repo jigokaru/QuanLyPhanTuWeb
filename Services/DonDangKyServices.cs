@@ -43,33 +43,41 @@ namespace QuanLyPhanTuWeb.Services
             {
                 donDangKys.ngayXuLy = DateTime.UtcNow;
                 donDangKys.phatTuId = PhatTuId;
-                donDangKys.trangThaiDon = duyetDon.trangThaiDon;
-            }
-            appDbContext.DonDangKys.Update(donDangKys);
-            appDbContext.SaveChanges();
-            if (donDangKys.trangThaiDon == true)
-            {
-                daoTrangs.soThanhVienThamGia += 1;
 
+                // Kiểm tra nếu trangThaiDon khác giá trị mới
+                if (donDangKys.trangThaiDon != duyetDon.trangThaiDon)
+                {
+                    donDangKys.trangThaiDon = duyetDon.trangThaiDon;
+
+                    appDbContext.DonDangKys.Update(donDangKys);
+                    appDbContext.SaveChanges();
+
+                    // Cập nhật soThanhVienThamGia chỉ khi trangThaiDon khác giá trị mới
+                    if (donDangKys.trangThaiDon == true)
+                    {
+                        daoTrangs.soThanhVienThamGia += 1;
+                    }
+                    else
+                    {
+                        daoTrangs.soThanhVienThamGia -= 1;
+                    }
+
+                    appDbContext.DaoTrangs.Update(daoTrangs);
+                    appDbContext.SaveChanges();
+                }
             }
-            else
-            {
-                daoTrangs.soThanhVienThamGia -= 1;
-            }
-            appDbContext.DaoTrangs.Update(daoTrangs);
-            appDbContext.SaveChanges();
             return donDangKys;
         }
 
-        public DonDangKys themDonDangKys(int? PhatTuId, DonDangKysDto? donDangKysDto)
+        public DonDangKys themDonDangKys(int? PhatTuId, int daoTrangId)
         {
-            DaoTrangs daoTrangs = appDbContext.DaoTrangs.FirstOrDefault(x => x.daoTrangId == donDangKysDto.daoTrangId);
+            DaoTrangs daoTrangs = appDbContext.DaoTrangs.FirstOrDefault(x => x.daoTrangId == daoTrangId);
             if(daoTrangs != null)
             {
                 var donDangKy = new DonDangKys
                 {
                     phatTuId = PhatTuId,
-                    daoTrangId = donDangKysDto.daoTrangId,
+                    daoTrangId = daoTrangId,
                     ngayGuiDon = DateTime.UtcNow
                 };
                 appDbContext.DonDangKys.Add(donDangKy);

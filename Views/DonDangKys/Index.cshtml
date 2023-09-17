@@ -2,47 +2,11 @@
 
 <div class="card shadow border-0 mt-4 rounded">
     <div class="card-body p-4" >
-        
-        <div class="card shadow border-0 mt-4 rounded" id="createDonDangKyCard" style="display: none">
-            <div class="card-body p-4">
-                <div class="modal-content">
-                    <form asp-controller="DonDangKys" asp-action="themDonDangKys" method="post">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel">Tạo đơn đăng ký</h5>
-                            <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
-                        </div>
-                        <div asp-validation-summary="All"></div>
-                        <div class="row" style="padding: 0 10px 0 10px">
-                            <div class="modal-body col-md-12">
-                                <label for="daoTrangId">Id đạo tràng</label>
-                                <input type="text" class="form-control" id="daoTrangId" name="daoTrangId">
-                                @if (!ViewData.ModelState.IsValid && ViewData["ErrorMessage"] != null)
-                                {
-                                    <span class="text-danger">@ViewData["ErrorMessage"]</span>
-                                }
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Đăng ký</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        
-
         <div class="row pb-3">
             <div class="col-6 ">
                 <a style="font-size: 1.4rem">Thông tin đơn đăng ký</a>
             </div>
-            <div class="col-6 text-end">
-                <a class="btn btn-primary rounded" asp-controller="DonDangKys" asp-action="themDonDangKys">
-                    <i class="bi bi-plus-circle"></i> Tạo đơn đăng ký
-                </a>
-            </div>
+            <div class="col-6 text-end"></div>
         </div>
         <table id="dataTable" class="table table-bordered table-striped text-center">
             <thead>
@@ -126,14 +90,15 @@
                             Bạn có chắc chắn muốn xóa đơn đăng ký này?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         </div>
                     </form>
 
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -154,6 +119,7 @@
         $("#confirmDeleteModal").modal("show");
         return false;
     });
+
 
     $(document).on("click", ".page-link", function () {
         var pageNumber = $(this).data("page-number");

@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace QuanLyPhanTuWeb.Controllers
 {
@@ -60,6 +61,7 @@ namespace QuanLyPhanTuWeb.Controllers
                         HttpOnly = true,
                         Expires = DateTime.Now.AddHours(1)
                     });
+                    HttpContext.Session.SetString("UserRole", UsernamePasswordValid.Role);
                     _db.Token.Add(Tokens);
                     _db.SaveChanges();
                     return RedirectToAction("Index", "Home");
@@ -89,13 +91,8 @@ namespace QuanLyPhanTuWeb.Controllers
             claims.Add(new Claim("accountId", Convert.ToString(phanTu.phatTuId)));
             claims.Add(new Claim("role", Convert.ToString(phanTu.Role)));
             claims.Add(new Claim(ClaimTypes.Role, phanTu.Role));
-            //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            //var authProperties = new AuthenticationProperties();
 
-            //HttpContext.SignInAsync(
-            //    CookieAuthenticationDefaults.AuthenticationScheme,
-            //    new ClaimsPrincipal(claimsIdentity),
-            //    authProperties).Wait();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, phanTu.phatTuId.ToString()));
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -104,6 +101,10 @@ namespace QuanLyPhanTuWeb.Controllers
                 signingCredentials: cred,
                 expires: DateTime.Now.AddHours(1));
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            HttpContext.User = principal;
+            
             return jwt;
         }
     }
