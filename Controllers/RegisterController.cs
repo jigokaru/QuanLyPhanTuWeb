@@ -22,7 +22,11 @@ namespace QuanLyPhanTuWeb.Controllers
         public IActionResult dangKy(Register register)
         {
             var res = _registerSevices.dangKy(register);
-            TempData["SuccessMessage"] = "Đăng ký thành công";
+            if(res != null)
+            {
+                TempData["SuccessMessage"] = "Đăng ký thành công";
+            }
+            
             return RedirectToAction("Index", "Login");
         }
     }
