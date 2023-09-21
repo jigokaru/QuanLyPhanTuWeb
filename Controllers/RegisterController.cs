@@ -25,9 +25,10 @@ namespace QuanLyPhanTuWeb.Controllers
             if(res != null)
             {
                 TempData["SuccessMessage"] = "Đăng ký thành công";
+                return RedirectToAction("Index", "Login");
             }
-            
-            return RedirectToAction("Index", "Login");
+
+            return View();
         }
     }
 }
