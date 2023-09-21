@@ -16,7 +16,7 @@ namespace QuanLyPhanTuWeb.Services
 
         public IQueryable<DonDangKys> donDangKyList(bool? trangThaiDon, string? tenPhatTu, DateTime? ngayGuiDon)
         {
-            var query = appDbContext.DonDangKys.Include(x => x.phatTu).AsQueryable();
+            var query = appDbContext.DonDangKys.Include(x => x.phatTu).Include(x => x.daoTrang).AsQueryable();
 
             if (trangThaiDon.HasValue)
             {
@@ -42,7 +42,6 @@ namespace QuanLyPhanTuWeb.Services
             if (donDangKys != null)
             {
                 donDangKys.ngayXuLy = DateTime.UtcNow;
-                donDangKys.phatTuId = PhatTuId;
 
                 // Kiểm tra nếu trangThaiDon khác giá trị mới
                 if (donDangKys.trangThaiDon != duyetDon.trangThaiDon)
@@ -72,17 +71,25 @@ namespace QuanLyPhanTuWeb.Services
         public DonDangKys themDonDangKys(int? PhatTuId, int daoTrangId)
         {
             DaoTrangs daoTrangs = appDbContext.DaoTrangs.FirstOrDefault(x => x.daoTrangId == daoTrangId);
-            if(daoTrangs != null)
+            DonDangKys donDangKys = appDbContext.DonDangKys.FirstOrDefault(x => x.daoTrangId == daoTrangId && x.phatTuId == PhatTuId);
+            if (daoTrangs != null)
             {
-                var donDangKy = new DonDangKys
+                if(donDangKys == null)
                 {
-                    phatTuId = PhatTuId,
-                    daoTrangId = daoTrangId,
-                    ngayGuiDon = DateTime.UtcNow
-                };
-                appDbContext.DonDangKys.Add(donDangKy);
-                appDbContext.SaveChanges();
-                return donDangKy;
+                    var donDangKy = new DonDangKys
+                    {
+                        phatTuId = PhatTuId,
+                        daoTrangId = daoTrangId,
+                        ngayGuiDon = DateTime.UtcNow
+                    };
+                    appDbContext.DonDangKys.Add(donDangKy);
+                    appDbContext.SaveChanges();
+                    return donDangKy;
+                }
+                else
+                {
+                    return null;
+                }    
             }
             return null;
         }

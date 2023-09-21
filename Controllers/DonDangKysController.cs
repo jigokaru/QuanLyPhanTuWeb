@@ -31,28 +31,32 @@ namespace QuanLyPhanTuWeb.Controllers
             return View(paginatedDonDangKys);
         }
 
-        //public IActionResult themDonDangKys()
-        //{
-        //    return View();
-        //}
-
         [HttpPost]
         public IActionResult themDonDangKys(int daoTrangId)
         {
             var jwt = Request.Cookies["token"];
-            var id = GetIdFromToken(jwt);
+            var id = TokenHelper.GetIdFromToken(jwt);
+            if (id == -1)
+            {
+                Response.Cookies.Delete("token");
+                return Unauthorized("Token has expired.");
+            }
             if (ModelState.IsValid)
             {
                 var res = _donDangKyServices.themDonDangKys(id, daoTrangId);
                 if (res == null)
                 {
-                    ModelState.AddModelError("daoTrangId", "đạo tràng Id không tồn tại.");
+                    ViewBag.IsRegistered = HttpContext.Session.GetString("isRegistered");
+
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Bạn đã đăng ký thành công.";
+                    
                 }
                 return RedirectToAction("Index", "DaoTrangs");
             }
-            ViewData["ErrorMessage"] = "bắt buộc nhập.";
             return View();
-            
         }
 
         public IActionResult duyetDon(int? donDangkyId)
@@ -77,7 +81,12 @@ namespace QuanLyPhanTuWeb.Controllers
         public IActionResult duyetDon(DuyetDon? duyetDon)
         {
             var jwt = Request.Cookies["token"];
-            var id = GetIdFromToken(jwt);
+            var id = TokenHelper.GetIdFromToken(jwt);
+            if (id == -1)
+            {
+                Response.Cookies.Delete("token");
+                return Unauthorized("Token has expired.");
+            }
             var res = _donDangKyServices.duyetDon(id, duyetDon);
             return RedirectToAction("Index", "DonDangKys");
         }
@@ -86,40 +95,15 @@ namespace QuanLyPhanTuWeb.Controllers
         public IActionResult xoaDonDangKys(int id)
         {
             var jwt = Request.Cookies["token"];
-            var Id = GetIdFromToken(jwt);
-            if(Id == null)
+            var Id = TokenHelper.GetIdFromToken(jwt);
+            if(Id == -1)
             {
-                return BadRequest("bạn không có quyền xóa.");
+                Response.Cookies.Delete("token");
+                return Unauthorized("Token has expired.");
             }
             var donDangKysRemove = _donDangKyServices.xoaDonDangKys(id);
             return RedirectToAction("Index", "DonDangKys");
         }
 
-        private int? GetIdFromToken(string jwtToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                var token = tokenHandler.ReadJwtToken(jwtToken);
-                var expiration = token.ValidTo;
-                if (DateTime.UtcNow <= expiration)
-                {
-                    var idClaim = token.Claims.FirstOrDefault(c => c.Type == "accountId");
-                    int Id;
-                    if (int.TryParse(idClaim.Value, out Id))
-                    {
-                        return Id;
-                    }
-                }
-                else
-                {
-                    Response.Cookies.Delete("token");
-                    throw new InvalidOperationException("Token has expired.");
-                }
-            }
-            return null;
-
-        }
     }
 }

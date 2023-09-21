@@ -21,6 +21,10 @@ namespace QuanLyPhanTuWeb.Controllers
         public IActionResult Index(Boolean? daKetThuc, string? noiToChuc, DateTime? thoiGianToChuc,
                                     int pageNumber = 1, int pageSize = 10)
         {
+            if (TempData.ContainsKey("SuccessMessage"))
+            {
+                ViewBag.SuccessMessage = TempData["SuccessMessage"].ToString();
+            }
             IQueryable<DaoTrangs> daoTrangsQuery = _daoTrangsServices.layDsDaoTrangs(daKetThuc, noiToChuc, thoiGianToChuc);
             Pagination<DaoTrangs> paginatedDaoTrangs = PageResult<DaoTrangs>.ToPageResult(daoTrangsQuery, pageNumber, pageSize);
             return View(paginatedDaoTrangs);

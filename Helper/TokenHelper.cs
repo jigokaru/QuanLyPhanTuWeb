@@ -1,4 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace QuanLyPhanTuWeb.Helper
 {
@@ -18,6 +20,28 @@ namespace QuanLyPhanTuWeb.Helper
                 }
             }
             return null;
+        }
+
+        public static int GetIdFromToken(string jwtToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                var token = tokenHandler.ReadJwtToken(jwtToken);
+                var expiration = token.ValidTo;
+                if (DateTime.UtcNow <= expiration)
+                {
+                    var idClaim = token.Claims.FirstOrDefault(c => c.Type == "accountId");
+                    int Id;
+                    if (int.TryParse(idClaim.Value, out Id))
+                    {
+                        return Id;
+                    }
+                }
+            }
+            return -1;
+
         }
     }
 }

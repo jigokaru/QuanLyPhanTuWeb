@@ -5,6 +5,12 @@
 @{
     var jwt = Context.Request.Cookies["token"];
     var userRole = TokenHelper.GetRoleFromToken(jwt);
+    var userId = TokenHelper.GetIdFromToken(jwt);
+}
+
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">@ViewBag.SuccessMessage</div>
 }
 
 <div class="card shadow border-0 mt-4 rounded">
@@ -14,35 +20,28 @@
                 <a style="font-size: 1.4rem">Thông tin đạo tràng</a>
             </div>
             <div class="col-6 text-end">
-                <a asp-controller="DaoTrangs" asp-action="Create" class="btn btn-primary rounded">
-                    <i class="bi bi-plus-circle"></i> Tạo đạo tràng mới
-                </a>
+                @if (userRole.ToUpper() == "ADMIN")
+                {
+                    <a asp-controller="DaoTrangs" asp-action="Create" class="btn btn-primary rounded">
+                        <i class="bi bi-plus-circle"></i> Tạo đạo tràng mới
+                    </a>
+                }
             </div>
         </div>
         <table id="dataTable" class="table table-bordered table-striped text-center">
             <thead>
                 <tr>
-                    <th></th>
                     <th>Nội dung</th>
                     <th>Nơi tổ chức</th>
                     <th>Thời gian tổ chức</th>
                     <th>Số thành viên tham gia</th>
-                    @if (userRole.ToUpper() == "ADMIN")
-                    {
-                        <th></th>
-                        <th></th>
-                    }
-                    else if (userRole.ToUpper() == "MEMBER")
-                    {
-                        <th></th>
-                    }
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var obj in Model.Data)
                 {
                     <tr>
-                        <td></td>
                         <td>
                             @obj.noiDung
                         </td>
@@ -58,22 +57,33 @@
                         @if (userRole.ToUpper() == "ADMIN")
                         {
                             <td>
-                                <a class="btn btn-primary mx-2 rounded flex-fill" asp-route-daoTrangId="@obj.daoTrangId" asp-controller="DaoTrangs" asp-action="Update">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                            </td>
-                            <td>
-                                <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-daotrangs-id="@obj.daoTrangId">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </a>
+                                <div class="w-100 btn-group" role="group">
+                                    <a class="btn btn-primary mx-2 rounded flex-fill" asp-route-daoTrangId="@obj.daoTrangId" asp-controller="DaoTrangs" asp-action="Update">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a class="btn btn-danger mx-2 rounded btn-delete flex-fill" data-daotrangs-id="@obj.daoTrangId">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </a>
+                                </div>
                             </td>
                         }
                         @if (userRole.ToUpper() == "MEMBER")
                         {
                             <td>
-                                <a class="btn btn-info mx-2 rounded btn-dangky flex-fill" data-daotrangs-id="@obj.daoTrangId">
-                                    <i class="bi bi-card-checklist"></i> Đăng ký
-                                </a>
+                                @using(AppDbContext db = new AppDbContext())
+                                {
+                                    DonDangKys donDangKys = db.DonDangKys.FirstOrDefault(x => x.daoTrangId == @obj.daoTrangId && x.phatTuId == userId);
+                                    string buttonClass = donDangKys != null ? "btn-success" : "btn-primary";
+                                    string buttonText = donDangKys != null ? "Đã đăng ký" : "Đăng ký";
+                                    bool isDisabled = donDangKys != null;
+
+                                    <button type="button" class="btn @buttonClass mx-2 rounded btn-dangky flex-fill" data-daotrangs-id="@obj.daoTrangId" disabled="@isDisabled">
+                                        @if (donDangKys == null)
+                                        {
+                                        <i class="bi bi-card-checklist"></i>
+                                        } @buttonText
+                                    </button>
+                                }
                             </td>
                         }
 
@@ -89,21 +99,25 @@
                     <li class="page-item">
                         <a class="page-link" href="#" data-page-number="1" data-page-size="@Model.PageSize" style="cursor: pointer">Đầu</a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" data-page-number="@Model.PageNumber - 1" data-page-size="@Model.PageSize" style="cursor: pointer">Trước</a>
+                    <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page-number="@{
+                            var next = Model.PageNumber - 1; @next
+                        }" data-page-size="@Model.PageSize" style="cursor: pointer">Trước</a>
                     </li>
                 }
                 @for (int i = 1; i <= Model.TotalPage; i++)
                 {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "") @(i == Model.PageNumber ? "disabled" : "")">
                         <a class="page-link" href="#" data-page-number="@i" data-page-size="@Model.PageSize" style="cursor: pointer">@i</a>
                     </li>
                 }
                 @if (Model.PageNumber < Model.TotalPage)
                 {
-                    @*<li class="page-item">
-                <a class="page-link" href="#" data-page-number="@Model.PageNumber + 1" data-page-size="@Model.PageSize" style="cursor: pointer">Tiếp</a>
-                </li>*@
+                    <li class="page-item @(Model.PageNumber == Model.TotalPage ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page-number="@{
+                            var next = Model.PageNumber + 1; @next
+                        }" data-page-size="@Model.PageSize" style="cursor: pointer">Tiếp</a>
+                    </li>
                     <li class="page-item">
                         <a class="page-link" href="#" data-page-number="@Model.TotalPage" data-page-size="@Model.PageSize" style="cursor: pointer">Cuối</a>
                     </li>
@@ -144,14 +158,23 @@
                             <a class="btn-close" style="cursor: pointer" data-dismiss="modal" aria-label="Close"></a>
                         </div>
                         <div class="modal-body">
-                            Bạn có chắc chắn muốn đắng ký đạo tràng này?
+                            Bạn có chắc chắn muốn đăng ký đạo tràng này?
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger" id="confirmDangKyButton">Đăng ký</button>
+                            <button type="submit" class="btn btn-info" id="confirmDangKyButton">Đăng ký</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="customModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>Bạn đã đăng ký rồi.</p>
+                <button onclick="closeModal()">OK</button>
             </div>
         </div>
     </div>
@@ -169,10 +192,13 @@
 
     $(document).on("click", ".btn-dangky", function () {
         var daotrangId = $(this).data("daotrangs-id");
+        
 
+        
         $("#dangKyDaoTrangId").val(daotrangId);
         // Hiển thị modal xác nhận
         $("#confirmDangKyModal").modal("show");
+        
         return false;
     });
 
